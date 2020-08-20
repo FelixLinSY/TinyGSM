@@ -87,6 +87,7 @@ Watch this repo for new updates! And of course, contributions are welcome ;)
         - SIM 800/900 - 5
         - SIM 5360/5320/5300/7100 - 10
         - SIM7000 - 8
+        - SIM7020E - 5
         - SIM 7500/7600/7800 - 10
         - u-blox 2G/3G - 7
         - u-blox SARA R4/N4 - 7
@@ -98,7 +99,7 @@ Watch this repo for new updates! And of course, contributions are welcome ;)
         - SIM800, u-Blox, XBee _cellular_, ESP8266, and Sequans Monarch
         - Note:  only some device models or firmware revisions have this feature (SIM8xx R14.18, A7, etc.)
     - Not yet supported on:
-        - Quectel modems, SIM7000, SIM 5360/5320/7100, SIM 7500/7600/7800
+        - Quectel modems, SIM7000, SIM7020, SIM 5360/5320/7100, SIM 7500/7600/7800
     - Not possible on:
         - SIM900, A6/A7, Neoway M590, XBee _WiFi_
     - Like TCP, most modules support simultaneous connections
