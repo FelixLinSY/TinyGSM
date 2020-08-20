@@ -46,38 +46,38 @@ enum RegStatus
     REG_OK_ROAMING   = 5,
     REG_UNKNOWN      = 4,
 };
-class TinyGsmSIM7020 : public TinyGsmModem<TinyGsmSIM7020>,
-                       public TinyGsmGPRS<TinyGsmSIM7020>,
-                       public TinyGsmTCP<TinyGsmSIM7020, TINY_GSM_MUX_COUNT>,
-                       public TinyGsmSSL<TinyGsmSIM7020>,
-                       public TinyGsmCalling<TinyGsmSIM7020>,
-                       public TinyGsmSMS<TinyGsmSIM7020>,
-                       public TinyGsmGSMLocation<TinyGsmSIM7020>,
-                       public TinyGsmTime<TinyGsmSIM7020>,
-                       public TinyGsmBattery<TinyGsmSIM7020> {
-    friend class TinyGsmModem<TinyGsmSIM7020>;
-    friend class TinyGsmGPRS<TinyGsmSIM7020>;
-    friend class TinyGsmTCP<TinyGsmSIM7020, TINY_GSM_MUX_COUNT>;
-    friend class TinyGsmSSL<TinyGsmSIM7020>;
-    friend class TinyGsmCalling<TinyGsmSIM7020>;
-    friend class TinyGsmSMS<TinyGsmSIM7020>;
-    friend class TinyGsmGSMLocation<TinyGsmSIM7020>;
-    friend class TinyGsmTime<TinyGsmSIM7020>;
-    friend class TinyGsmBattery<TinyGsmSIM7020>;
+class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>,
+                       public TinyGsmGPRS<TinyGsmSim7020>,
+                       public TinyGsmTCP<TinyGsmSim7020, TINY_GSM_MUX_COUNT>,
+                       public TinyGsmSSL<TinyGsmSim7020>,
+                       public TinyGsmCalling<TinyGsmSim7020>,
+                       public TinyGsmSMS<TinyGsmSim7020>,
+                       public TinyGsmGSMLocation<TinyGsmSim7020>,
+                       public TinyGsmTime<TinyGsmSim7020>,
+                       public TinyGsmBattery<TinyGsmSim7020> {
+    friend class TinyGsmModem<TinyGsmSim7020>;
+    friend class TinyGsmGPRS<TinyGsmSim7020>;
+    friend class TinyGsmTCP<TinyGsmSim7020, TINY_GSM_MUX_COUNT>;
+    friend class TinyGsmSSL<TinyGsmSim7020>;
+    friend class TinyGsmCalling<TinyGsmSim7020>;
+    friend class TinyGsmSMS<TinyGsmSim7020>;
+    friend class TinyGsmGSMLocation<TinyGsmSim7020>;
+    friend class TinyGsmTime<TinyGsmSim7020>;
+    friend class TinyGsmBattery<TinyGsmSim7020>;
 
     /*
      * Inner Client
      */
   public:
-    class GsmClientSIM7020 : public GsmClient {
-        friend class TinyGsmSIM7020;
+    class GsmClientSim7020 : public GsmClient {
+        friend class TinyGsmSim7020;
 
       public:
-        GsmClientSIM7020() {}
+        GsmClientSim7020() {}
 
-        explicit GsmClientSIM7020(TinyGsmSIM7020 &modem, uint8_t mux = 0) { init(&modem, mux); }
+        explicit GsmClientSim7020(TinyGsmSim7020 &modem, uint8_t mux = 0) { init(&modem, mux); }
 
-        bool init(TinyGsmSIM7020 *modem, uint8_t mux = 0)
+        bool init(TinyGsmSim7020 *modem, uint8_t mux = 0)
         {
             this->at       = modem;
             sock_available = 0;
@@ -126,11 +126,11 @@ class TinyGsmSIM7020 : public TinyGsmModem<TinyGsmSIM7020>,
      * Inner Secure Client
      */
   public:
-    class GsmClientSecureSIM7020 : public GsmClientSIM7020 {
+    class GsmClientSecureSim7020 : public GsmClientSim7020 {
       public:
-        GsmClientSecureSIM7020() {}
+        GsmClientSecureSim7020() {}
 
-        explicit GsmClientSecureSIM7020(TinyGsmSIM7020 &modem, uint8_t mux = 0) : GsmClientSIM7020(modem, mux) {}
+        explicit GsmClientSecureSim7020(TinyGsmSim7020 &modem, uint8_t mux = 0) : GsmClientSim7020(modem, mux) {}
 
       public:
         int connect(const char *host, uint16_t port, int timeout_s) override
@@ -148,7 +148,7 @@ class TinyGsmSIM7020 : public TinyGsmModem<TinyGsmSIM7020>,
      * Constructor
      */
   public:
-    explicit TinyGsmSIM7020(Stream &stream, uint8_t reset_pin) : stream(stream), reset_pin(reset_pin) { memset(sockets, 0, sizeof(sockets)); }
+    explicit TinyGsmSim7020(Stream &stream, uint8_t reset_pin) : stream(stream), reset_pin(reset_pin) { memset(sockets, 0, sizeof(sockets)); }
 
     /*
      * Basic functions
@@ -655,7 +655,7 @@ class TinyGsmSIM7020 : public TinyGsmModem<TinyGsmSIM7020>,
     unsigned long baud;
 
   protected:
-    GsmClientSIM7020 *sockets[TINY_GSM_MUX_COUNT];
+    GsmClientSim7020 *sockets[TINY_GSM_MUX_COUNT];
     const char *      gsmNL = GSM_NL;
 };
 
