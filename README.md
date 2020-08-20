@@ -65,7 +65,6 @@ TinyGSM also pulls data gently from the modem (whenever possible), so it can ope
 
 More modems may be supported later:
 - [ ] Quectel M10, UG95
-- [ ] SIMCom SIM7020
 - [ ] Telit GL865
 - [ ] ZTE MG2639
 - [ ] Hi-Link HLK-RM04
