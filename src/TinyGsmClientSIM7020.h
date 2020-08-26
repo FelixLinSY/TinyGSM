@@ -18,13 +18,8 @@
 #define TINY_GSM_MUX_COUNT 5
 #define TINY_GSM_BUFFER_READ_AND_CHECK_SIZE
 
-#include "TinyGsmBattery.tpp"
-#include "TinyGsmCalling.tpp"
 #include "TinyGsmGPRS.tpp"
-#include "TinyGsmGSMLocation.tpp"
 #include "TinyGsmModem.tpp"
-#include "TinyGsmSMS.tpp"
-#include "TinyGsmSSL.tpp"
 #include "TinyGsmTCP.tpp"
 #include "TinyGsmTime.tpp"
 
@@ -49,21 +44,11 @@ enum RegStatus
 class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>,
                        public TinyGsmGPRS<TinyGsmSim7020>,
                        public TinyGsmTCP<TinyGsmSim7020, TINY_GSM_MUX_COUNT>,
-                       public TinyGsmSSL<TinyGsmSim7020>,
-                       public TinyGsmCalling<TinyGsmSim7020>,
-                       public TinyGsmSMS<TinyGsmSim7020>,
-                       public TinyGsmGSMLocation<TinyGsmSim7020>,
-                       public TinyGsmTime<TinyGsmSim7020>,
-                       public TinyGsmBattery<TinyGsmSim7020> {
+                       public TinyGsmTime<TinyGsmSim7020> {
     friend class TinyGsmModem<TinyGsmSim7020>;
     friend class TinyGsmGPRS<TinyGsmSim7020>;
     friend class TinyGsmTCP<TinyGsmSim7020, TINY_GSM_MUX_COUNT>;
-    friend class TinyGsmSSL<TinyGsmSim7020>;
-    friend class TinyGsmCalling<TinyGsmSim7020>;
-    friend class TinyGsmSMS<TinyGsmSim7020>;
-    friend class TinyGsmGSMLocation<TinyGsmSim7020>;
     friend class TinyGsmTime<TinyGsmSim7020>;
-    friend class TinyGsmBattery<TinyGsmSim7020>;
 
     /*
      * Inner Client
@@ -125,25 +110,7 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>,
     /*
      * Inner Secure Client
      */
-  public:
-    class GsmClientSecureSim7020 : public GsmClientSim7020 {
-      public:
-        GsmClientSecureSim7020() {}
-
-        explicit GsmClientSecureSim7020(TinyGsmSim7020 &modem, uint8_t mux = 0) : GsmClientSim7020(modem, mux) {}
-
-      public:
-        int connect(const char *host, uint16_t port, int timeout_s) override
-        {
-            stop();
-            TINY_GSM_YIELD();
-            rx.clear();
-            sock_connected = at->modemConnect(host, port, mux, timeout_s);
-            return sock_connected;
-        }
-        TINY_GSM_CLIENT_CONNECT_OVERRIDES
-    };
-
+    // TODO: SSL Client
     /*
      * Constructor
      */
