@@ -13,7 +13,7 @@
 // #define TINY_GSM_DEBUG Serial
 // #define TINY_GSM_USE_HEX
 
-#define TINY_GSM_YIELD_MS 5
+#define TINY_GSM_YIELD_MS 3
 
 #define TINY_GSM_MUX_COUNT 5
 #define TINY_GSM_BUFFER_READ_AND_CHECK_SIZE
