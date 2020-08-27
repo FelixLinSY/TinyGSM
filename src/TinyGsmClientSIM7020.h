@@ -18,7 +18,7 @@
 #define TINY_GSM_MUX_COUNT 5
 #define TINY_GSM_BUFFER_READ_AND_CHECK_SIZE
 
-#include "TinyGsmGPRS.tpp"
+#include "TinyGsmNBIOT.tpp"
 #include "TinyGsmModem.tpp"
 #include "TinyGsmTCP.tpp"
 #include "TinyGsmTime.tpp"
@@ -41,11 +41,11 @@ enum RegStatus {
   REG_UNKNOWN      = 4,
 };
 class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>,
-                       public TinyGsmGPRS<TinyGsmSim7020>,
+                       public TinyGsmNBIOT<TinyGsmSim7020>,
                        public TinyGsmTCP<TinyGsmSim7020, TINY_GSM_MUX_COUNT>,
                        public TinyGsmTime<TinyGsmSim7020> {
   friend class TinyGsmModem<TinyGsmSim7020>;
-  friend class TinyGsmGPRS<TinyGsmSim7020>;
+  friend class TinyGsmNBIOT<TinyGsmSim7020>;
   friend class TinyGsmTCP<TinyGsmSim7020, TINY_GSM_MUX_COUNT>;
   friend class TinyGsmTime<TinyGsmSim7020>;
 
