@@ -126,6 +126,8 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>,
    */
  protected:
   bool initImpl(const char* pin = NULL) {
+    restart();
+
     DBG(GF("### TinyGSM Version:"), TINYGSM_VERSION);
     DBG(GF("### TinyGSM Compiled Module:  TinyGsmClientSIM7020"));
 
@@ -221,9 +223,9 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>,
     digitalWrite(this->reset_pin, LOW);
     delay(300);
     digitalWrite(this->reset_pin, HIGH);
-    delay(300);
+    delay(5000);
 
-    return init();
+    return true;
   }
 
   bool powerOffImpl() {
@@ -268,6 +270,20 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>,
    */
  protected:
   // No functions of this type supported
+
+  /*
+   * NBIOT functions
+   */
+ protected:
+  bool nbiotConnectImpl(const char* apn, uint8_t band = 0) {
+    // Set APN
+    sendAT("*MCGDEFCONT=", GF("\"IP\",\""), apn, GF("\""));
+    if (waitResponse() != 1) { return false; }
+    // Set Band
+    sendAT("+CBAND=", band);
+    if (waitResponse() != 1) { return false; }
+    return true;
+  }
 
   /*
    * SIM card functions

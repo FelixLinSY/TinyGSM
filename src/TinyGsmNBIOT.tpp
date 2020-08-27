@@ -49,9 +49,8 @@ class TinyGsmNBIOT {
   /*
    * NBIOT functions
    */
-  bool nbiotConnect(const char* apn, const char* user = NULL,
-                    const char* pwd = NULL) {
-    return thisModem().nbiotConnectImpl(apn, user, pwd);
+  bool nbiotConnect(const char* apn, uint8_t band = 0) {
+    return thisModem().nbiotConnectImpl(apn, band);
   }
   bool nbiotDisconnect() {
     return thisModem().nbiotDisconnectImpl();
