@@ -466,7 +466,7 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>,
       data += (char)(n2 > 9 ? 'A' + n2 - 10 : '0' + n2);
     }
 
-    DBG("### SEND DATA: ", data);
+    // DBG("### SEND DATA: ", data);
 
     sendAT(GF("+CTLSSEND="), mux, ',', (uint16_t)(len * 2), ',', data, ',', GF("802"));
     stream.flush();
@@ -476,34 +476,13 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>,
   }
 
   size_t modemRead(size_t size, uint8_t mux) {
-    if (!sockets[mux]) return 0;
-      /* Get Data from Network Manually */
-    sendAT(GF("+CTLSRECV="), mux, ',', (uint16_t)size, GF(",802"));
-    if (waitResponse(GF("+CTLSRECV:")) != 1) { return 0; }
-    streamSkipUntil(',');  // Skip mux
+    return 0;
+  }
 
-    int16_t len_confirmed = streamGetIntBefore(',') / 2;
-    streamSkipUntil('\"');  // Skip '\"'
-
-    for (int i = 0; i < len_confirmed; i++) {
-      uint32_t startMillis = millis();
-      while (stream.available() < 2 &&
-             (millis() - startMillis < sockets[mux]->_timeout)) {
-        TINY_GSM_YIELD();
-      }
-      char buf[4] = {
-          0,
-      };
-      buf[0] = stream.read();
-      buf[1] = stream.read();
-      char c = strtol(buf, NULL, 16);
-      sockets[mux]->rx.put(c);
-    }
-    // DBG("### READ:", len_requested, "from", mux);
-    // sockets[mux]->sock_available = modemGetAvailable(mux);
-    sockets[mux]->sock_available = len_confirmed;
+  size_t modemGetAvailable(uint8_t mux) {
+    sendAT(GF("+CTLSRECV="), mux, GF(",512,802"));
     waitResponse();
-    return len_confirmed;
+    return 0;
   }
 
   /*
@@ -557,6 +536,12 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>,
           }
 
           int16_t len_confirmed = streamGetIntBefore(',') / 2;
+
+          if(len_confirmed == -30848) {
+            sockets[mux]->sock_connected = false;
+            data = "";
+            goto finish;
+          }
           streamSkipUntil('\"');  // Skip '\"'
 
           for (int i = 0; i < len_confirmed; i++) {
@@ -573,10 +558,7 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>,
             char c = strtol(buf, NULL, 16);
             sockets[mux]->rx.put(c);
           }
-          // DBG("### READ:", len_requested, "from", mux);
-          // sockets[mux]->sock_available = modemGetAvailable(mux);
-          sockets[mux]->sock_available = len_confirmed;
-          waitResponse();
+          streamSkipUntil('\n');
           data = "";
           // DBG("### Got Data:", mux);
         } else if (data.endsWith(GF("+CLTS"))) {
