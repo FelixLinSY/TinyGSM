@@ -124,10 +124,10 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>,
       }
 
       /* Set the Certificate Parameters */
-      char *data = (char*)this->root_ca;
-      size_t total_len = strlen(this->root_ca);
-      size_t chunkSize = total_len;
-      int send_len = 0;
+      int total_len = strlen_P(this->root_ca);
+      int chunkSize = total_len;
+      int send_len = 0, writted = 0;
+      char c;
 
       while (chunkSize > 0)
       {
@@ -153,8 +153,10 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>,
         // send Certificate
         for (int ii = 0; ii < send_len; ii++)
         {
-          at->streamWrite(*data++);
+          c = pgm_read_byte_near(root_ca + (writted + ii));
+          at->streamWrite(c);
         }
+        writted += send_len;
         at->streamWrite(GF("\"" GSM_NL));
         if(at->waitResponse() != 1) {
           return false;
@@ -453,22 +455,18 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>,
   }
 
   int16_t modemSend(const uint8_t* buff, size_t len, uint8_t mux) {
-    /* Send Data to Remote Via Socket With Data Mode */
-    String data = "";
-    data.reserve(len * 2);
+    streamWrite(GF("AT+CTLSSEND="), mux, ',', (uint16_t)(len * 2), ',');
 
     for (size_t i = 0; i < len; i++) {
       uint8_t b = buff[i];
       uint8_t n1 = (b >> 4) & 0x0f;
       uint8_t n2 = (b & 0x0f);
 
-      data += (char)(n1 > 9 ? 'A' + n1 - 10 : '0' + n1);
-      data += (char)(n2 > 9 ? 'A' + n2 - 10 : '0' + n2);
+      streamWrite((char)(n1 > 9 ? 'A' + n1 - 10 : '0' + n1));
+      streamWrite((char)(n2 > 9 ? 'A' + n2 - 10 : '0' + n2));
     }
+    streamWrite(GF(",802" GSM_NL));
 
-    // DBG("### SEND DATA: ", data);
-
-    sendAT(GF("+CTLSSEND="), mux, ',', (uint16_t)(len * 2), ',', data, ',', GF("802"));
     stream.flush();
     if (waitResponse(15000L, GF(GSM_NL "+CTLSSEND:")) != 1) { return 0; }
     streamSkipUntil(',');  // Skip mux
