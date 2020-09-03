@@ -171,7 +171,9 @@ template <class modemType, uint8_t muxCount> class TinyGsmTCP {
             return cnt;
 
 #elif defined TINY_GSM_BUFFER_READ_NO_CHECK
-            // Reads characters out of the TinyGSM fifo.
+            // Reads characters out of the TinyGSM fifo, and from the modem chip's
+            // internal fifo if avaiable.
+            at->maintain();
             while (cnt < size) {
                 size_t chunk = TinyGsmMin(size - cnt, rx.size());
                 if (chunk > 0) {
@@ -179,6 +181,14 @@ template <class modemType, uint8_t muxCount> class TinyGsmTCP {
                     buf += chunk;
                     cnt += chunk;
                     continue;
+                } /* TODO: Read directly into user buffer? */
+                at->maintain();
+                if (sock_available > 0) {
+                    int n = at->modemRead(TinyGsmMin((uint16_t)rx.free(), sock_available), mux);
+                    if (n == 0)
+                        break;
+                } else {
+                    break;
                 }
             }
             return cnt;
@@ -305,7 +315,6 @@ template <class modemType, uint8_t muxCount> class TinyGsmTCP {
         }
 
 #elif defined TINY_GSM_NO_MODEM_BUFFER || defined TINY_GSM_BUFFER_READ_NO_CHECK
-        thisModem().modemGetAvailable(1);
         // Just listen for any URC's
         thisModem().waitResponse(100, NULL, NULL);
 
