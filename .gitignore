@@ -45,3 +45,12 @@ extras/At Command Manuals - Unsupported/*
 # Filters
 .gitconfig
 filters/*
+
+# 忽略.vscode 資料夾
+.vscode/
+# 忽略 build_temp 資料夾
+build_temp/
+# 忽略忽略設定檔
+*.gitignore
+# 忽略格式化設定檔
+*.clang-format
