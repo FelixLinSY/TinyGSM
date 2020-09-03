@@ -494,7 +494,7 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>, public TinyGsmNBIOT<
         // DBG("### READ:", len_requested, "from", mux);
         // sockets[mux]->sock_available = modemGetAvailable(mux);
         sockets[mux]->sock_available = len_confirmed;
-        waitResponse();
+        waitResponse(GSM_OK);
         return len_requested;
     }
 

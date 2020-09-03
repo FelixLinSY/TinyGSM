@@ -16,7 +16,7 @@
 #include "TinyGsmFifo.h"
 
 #if !defined(TINY_GSM_RX_BUFFER)
-#define TINY_GSM_RX_BUFFER 64
+#define TINY_GSM_RX_BUFFER 32
 #endif
 
 // Because of the ordering of resolution of overrides in templates, these need
