@@ -16,8 +16,7 @@
 #define TINY_GSM_YIELD_MS 3
 
 #define TINY_GSM_MUX_COUNT 5
-// #define TINY_GSM_BUFFER_READ_AND_CHECK_SIZE
-#define TINY_GSM_BUFFER_READ_NO_CHECK
+#define TINY_GSM_BUFFER_READ_AND_CHECK_SIZE
 
 #include <string.h>
 
@@ -509,7 +508,7 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>, public TinyGsmNBIOT<
 
     size_t modemGetAvailable(uint8_t mux)
     {
-        sendAT(GF("+CTLSRECV="), mux, GF(",512,802"));
+        sendAT(GF("+CTLSRECV="), mux, GF(",16,802"));
         waitResponse();
         return 0;
     }
