@@ -508,8 +508,10 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>, public TinyGsmNBIOT<
 
     size_t modemGetAvailable(uint8_t mux)
     {
-        sendAT(GF("+CTLSRECV="), mux, GF(",16,802"));
-        waitResponse();
+        if (sockets[mux]->rx.size() + 32 <= sockets[mux]->rx.free()) {
+            sendAT(GF("+CTLSRECV="), mux, GF(",16,802"));
+            waitResponse();
+        }
         return 0;
     }
 
