@@ -13,6 +13,12 @@
 // #define TINY_GSM_DEBUG Serial
 // #define TINY_GSM_USE_HEX
 
+#ifdef __AVR__
+#define TINY_GSM_RX_BUFFER 32
+#else
+#define TINY_GSM_RX_BUFFER 192
+#endif
+
 #define TINY_GSM_YIELD_MS 3
 
 #define TINY_GSM_MUX_COUNT 5
