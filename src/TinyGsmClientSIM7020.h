@@ -13,6 +13,13 @@
 // #define TINY_GSM_DEBUG Serial
 // #define TINY_GSM_USE_HEX
 
+#ifdef __AVR__
+#define TINY_GSM_RX_BUFFER 64
+#else
+#define TINY_GSM_RX_BUFFER 256
+#endif
+#define TINY_GSM_GET_BUFFER ((TINY_GSM_RX_BUFFER - 32) / 2)
+
 #define TINY_GSM_YIELD_MS 3
 
 #define TINY_GSM_MUX_COUNT 5
@@ -508,8 +515,8 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>, public TinyGsmNBIOT<
 
     size_t modemGetAvailable(uint8_t mux)
     {
-        if (sockets[mux]->rx.size() + 32 <= sockets[mux]->rx.free()) {
-            sendAT(GF("+CTLSRECV="), mux, GF(",16,802"));
+        if (sockets[mux]->rx.size() == 0) {
+            sendAT(GF("+CTLSRECV="), mux, ',', TINY_GSM_GET_BUFFER, GF(",802"));
             waitResponse();
         }
         return 0;
@@ -566,7 +573,7 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>, public TinyGsmNBIOT<
 
                     int16_t len_confirmed = streamGetIntBefore(',') / 2;
 
-                    if (len_confirmed == -30848) {
+                    if (len_confirmed == -30848 || len_confirmed == 0) {
                         sockets[mux]->sock_connected = false;
                         data                         = "";
                         goto finish;
