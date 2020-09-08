@@ -496,7 +496,7 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>, public TinyGsmNBIOT<
         waitResponse(timeout_ms, GF("+CTLSCONN:"));
         streamSkipUntil(',');     // Skip mux
 
-        ret = streamGetIntBefore('\n');
+        ret = streamGetIntBefore('\r');
         if (ret == 1) {
             return true;
         } else {
