@@ -127,16 +127,32 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>, public TinyGsmNBIOT<
             if (this->root_ca == NULL) {
                 return false;
             }
-
+            int res = true;
             /* Set the Certificate Parameters */
-            int  total_len = strlen_P(this->root_ca);
+            res &= sendCertificate(0, this->root_ca);
+            if (this->client_ca && this->client_key) {
+                res &= sendCertificate(1, this->client_ca);
+                res &= sendCertificate(2, this->client_key);
+            }
+            return res;
+        }
+
+        bool sendCertificate(int type, const char *cert)
+        {
+            if (cert == NULL) {
+                return false;
+            }
+            int  total_len = strlen_P(cert);
             int  chunkSize = total_len;
             int  send_len = 0, writted = 0;
             char c;
 
             while (chunkSize > 0) {
-                // Set root ca
-                at->streamWrite(GF("AT+CSETCA=0,"), total_len, ',');
+                /*  type 0 : Root CA
+                    type 1 : Client CA
+                    type 2 : Client Private Key
+                */
+                at->streamWrite(GF("AT+CSETCA="), type, ',', total_len, ',');
                 send_len = chunkSize;
                 if (send_len > 1000) {
                     send_len = 1000;
@@ -156,7 +172,7 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>, public TinyGsmNBIOT<
                 at->streamWrite(GF(",0,\""));
                 // send Certificate
                 for (int ii = 0; ii < send_len; ii++) {
-                    c = pgm_read_byte_near(root_ca + (writted + ii));
+                    c = pgm_read_byte_near(cert + (writted + ii));
                     at->streamWrite(c);
                 }
                 writted += send_len;
