@@ -212,6 +212,7 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>, public TinyGsmNBIOT<
 
         DBG(GF("### TinyGSM Version:"), TINYGSM_VERSION);
         DBG(GF("### TinyGSM Compiled Module:  TinyGsmClientSIM7020"));
+        DBG(GF("### TINY_GSM_GET_BUFFER: "), TINY_GSM_GET_BUFFER);
 
         if (!testAT()) {
             return false;
@@ -376,7 +377,7 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>, public TinyGsmNBIOT<
      * NBIOT functions
      */
   protected:
-    bool nbiotConnectImpl(const char *apn, uint8_t band = 0)
+    bool nbiotConnectImpl(const char *apn, uint8_t band = 0, uint16_t bs_code = 0)
     {
         // Set APN
         sendAT("*MCGDEFCONT=", GF("\"IP\",\""), apn, GF("\""));
@@ -384,9 +385,18 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>, public TinyGsmNBIOT<
             return false;
         }
         // Set Band
-        sendAT("+CBAND=", band);
-        if (waitResponse() != 1) {
-            return false;
+        if (band != 0) {
+            sendAT("+CBAND=", band);
+            if (waitResponse() != 1) {
+                return false;
+            }
+        }
+
+        if (bs_code != 0) {
+            sendAT("+COPS=1,2,\"", bs_code, '\"');
+            if (waitResponse(120000) != 1) {
+                return false;
+            }
         }
         return true;
     }

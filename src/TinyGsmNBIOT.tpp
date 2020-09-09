@@ -39,7 +39,7 @@ template <class modemType> class TinyGsmNBIOT {
     /*
      * NBIOT functions
      */
-    bool nbiotConnect(const char *apn, uint8_t band = 0) { return thisModem().nbiotConnectImpl(apn, band); }
+    bool nbiotConnect(const char *apn, uint8_t band = 0, uint16_t bs_code = 0) { return thisModem().nbiotConnectImpl(apn, band, bs_code); }
     bool nbiotDisconnect() { return thisModem().nbiotDisconnectImpl(); }
     // Checks if current attached to NBIOT service
     bool isnbiotConnected() { return thisModem().isnbiotConnectedImpl(); }
