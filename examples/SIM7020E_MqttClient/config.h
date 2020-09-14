@@ -8,21 +8,16 @@
 #define TINY_GSM_MODEM_SIM7020
 
 #define debugSerial Serial
+#define TINY_GSM_DEBUG debugSerial
 
 /* Set serial for AT commands (to the module) */
-/* Use Hardware Serial on MEGA2560 */
-// #define nbiotSerial Serial2
+#define nbiotSerial Serial2
 
 // Set reset pin
 #define RESET_PIN 7
 
 /* See all AT commands, if wanted */
 // #define DUMP_AT_COMMANDS
-
-// Range to attempt to autobaud
-#define GSM_AUTOBAUD_MIN 9600
-#define GSM_AUTOBAUD_MAX 9600
-// #define GSM_AUTOBAUD_MAX 115200
 
 /* ---nbiot config--- */
 // #define APN "twm.nbiot"

@@ -2,8 +2,8 @@
 #include <PubSubClient.h>
 #include <TinyGsmClient.h>
 
-#include <SoftwareSerial.h>
-SoftwareSerial nbiotSerial(8, 9);
+// #include <SoftwareSerial.h>
+// SoftwareSerial nbiotSerial(8, 9);
 
 const char apn[] = APN;
 
@@ -28,15 +28,16 @@ void nbConnect(void);
 void setup()
 {
     debugSerial.begin(115200);
+    nbiotSerial.begin(115200);
 #if DEBUG_MODE
     while (!debugSerial)
         ;
 #endif
     randomSeed(analogRead(A0));
-    TinyGsmAutoBaud(nbiotSerial, GSM_AUTOBAUD_MIN, GSM_AUTOBAUD_MAX);
     nbConnect();
 
     mqtt.setCallback(mqttCallback);
+    mqtt.setKeepAlive(300);
 }
 
 void loop()
