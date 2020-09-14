@@ -42,7 +42,6 @@ void setup()
 
 void loop()
 {
-    debugSerial.read();
     static unsigned long timer = millis();
     char                 buff[10];
 
