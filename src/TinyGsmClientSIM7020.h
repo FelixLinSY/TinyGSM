@@ -162,6 +162,10 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>, public TinyGsmNBIOT<
         sendAT(GF("+CBATCHK=1"));
         waitResponse();
 
+        // Save config
+        sendAT(GF("&w"));
+        waitResponse();
+
         SimStatus ret = getSimStatus();
         // if the sim isn't ready and a pin has been provided, try to unlock the sim
         if (ret != SIM_READY && pin != NULL && strlen(pin) > 0) {
@@ -500,7 +504,7 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>, public TinyGsmNBIOT<
         // DBG("### READ:", len_requested, "from", mux);
         // sockets[mux]->sock_available = modemGetAvailable(mux);
         sockets[mux]->sock_available = len_confirmed;
-        waitResponse(GSM_OK);
+        waitResponse();
         return len_requested;
     }
 
