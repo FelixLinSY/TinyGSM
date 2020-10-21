@@ -163,8 +163,8 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>, public TinyGsmNBIOT<
         waitResponse();
 
         // Save config
-        sendAT(GF("&w"));
-        waitResponse();
+        // sendAT(GF("&w"));
+        // waitResponse();
 
         SimStatus ret = getSimStatus();
         // if the sim isn't ready and a pin has been provided, try to unlock the sim
