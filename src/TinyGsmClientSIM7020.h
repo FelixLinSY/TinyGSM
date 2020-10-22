@@ -19,7 +19,7 @@
 #define TINY_GSM_RX_BUFFER 192
 #endif
 
-#define TINY_GSM_YIELD_MS 3
+#define TINY_GSM_YIELD_MS 0
 
 #define TINY_GSM_MUX_COUNT 5
 #define TINY_GSM_BUFFER_READ_AND_CHECK_SIZE
@@ -406,7 +406,7 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>, public TinyGsmNBIOT<
     bool modemConnect(const char *host, uint16_t port, uint8_t mux, int timeout_s = 75)
     {
         bool     rsp = true;
-        String   ip_addr;
+        String   ip_addr = "";
         uint32_t timeout_ms = ((uint32_t)timeout_s) * 1000;
         /* Query the IP Address of Given Domain Name */
         sendAT(GF("+CDNSGIP="), host);
@@ -417,6 +417,9 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>, public TinyGsmNBIOT<
             int n1  = ip_addr.lastIndexOf(',');
             int n2  = ip_addr.lastIndexOf('\"');
             ip_addr = ip_addr.substring(n1 + 2, n2);
+        }
+        if(ip_addr == ""){
+            return 0;
         }
         /* Enable TCP Send Flag */
         sendAT(GF("+CSOSENDFLAG=1"));
