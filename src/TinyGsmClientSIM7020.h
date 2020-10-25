@@ -408,26 +408,19 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>, public TinyGsmNBIOT<
         bool     rsp = true;
         String   ip_addr = "";
         uint32_t timeout_ms = ((uint32_t)timeout_s) * 1000;
-        uint8_t try_count = 0;
         /* Query the IP Address of Given Domain Name */
-        do {
-            sendAT(GF("+CDNSGIP="), host);
-            if (waitResponse(10000L, GF("+CDNSGIP: 1,"))) {
-                if (waitResponse(5000L, ip_addr, GF(GSM_NL)) != 1) {
-                    return 0;
-                }
-                break;
+        sendAT(GF("+CDNSGIP="), host);
+        if (waitResponse(10000L, GF("+CDNSGIP:"))) {
+            if (waitResponse(5000L, ip_addr, GF(GSM_NL)) != 1) {
+                return 0;
             }
-            try_count++;
-        } while (try_count < 5);
-        int n1  = ip_addr.lastIndexOf(',');
-        int n2  = ip_addr.lastIndexOf('\"');
-        ip_addr = ip_addr.substring(n1 + 2, n2);
-
+            int n1  = ip_addr.lastIndexOf(',');
+            int n2  = ip_addr.lastIndexOf('\"');
+            ip_addr = ip_addr.substring(n1 + 2, n2);
+        }
         if(ip_addr == ""){
             return 0;
         }
-        DBG("###", ip_addr);
         /* Enable TCP Send Flag */
         sendAT(GF("+CSOSENDFLAG=1"));
         if (waitResponse() != 1) {
