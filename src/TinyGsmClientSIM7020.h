@@ -19,7 +19,9 @@
 #define TINY_GSM_RX_BUFFER 192
 #endif
 
+#if !defined(TINY_GSM_YIELD_MS)
 #define TINY_GSM_YIELD_MS 0
+#endif
 
 #define TINY_GSM_MUX_COUNT 5
 #define TINY_GSM_BUFFER_READ_AND_CHECK_SIZE
