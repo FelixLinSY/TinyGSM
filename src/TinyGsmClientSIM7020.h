@@ -99,6 +99,9 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>, public TinyGsmNBIOT<
         void stop(uint32_t maxWaitMs)
         {
             dumpModemBuffer(maxWaitMs);
+            at->sendAT(GF("+CIPSHUT"));
+            at->waitResponse(10000, GF("SHUT OK"));
+            
             at->sendAT(GF("+CIPCLOSE=1"));
             sock_connected = false;
             at->waitResponse(GF("CLOSE OK"));
@@ -153,13 +156,6 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>, public TinyGsmNBIOT<
         waitResponse();
 
         DBG(GF("### Modem:"), getModemName());
-
-        // Enable Local Time Stamp for getting network time
-        sendAT(GF("+CLTS=1"));
-        if (waitResponse(10000L) != 1) {
-            return false;
-        }
-
         // Enable battery checks
         sendAT(GF("+CBATCHK=1"));
         waitResponse();
@@ -214,8 +210,6 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>, public TinyGsmNBIOT<
         sendAT(GF("E0"));     // Echo Off
         waitResponse();
         sendAT(GF("&W"));     // Write
-        waitResponse();
-        sendAT(GF("+CLTS=0"));     // Disable Get Local Timestamp
         waitResponse();
         sendAT(GF("+CSOSENDFLAG=0"));     // Disable TCP Send Flag
         waitResponse();
@@ -414,7 +408,7 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>, public TinyGsmNBIOT<
         uint32_t timeout_ms = ((uint32_t)timeout_s) * 1000;
         /* Select Data Transmitting Mode */
         sendAT(GF("+CIPQSEND=1"));
-        if (waitResponse(10000) != 1) { 
+        if (waitResponse() != 1) { 
             return false; 
         }
         /* Set to get data manually */
@@ -595,10 +589,6 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>, public TinyGsmNBIOT<
                     }
                     data = "";
                     // DBG("### Closed: ", mux);
-                } else if (data.endsWith(GF("+CLTS"))) {
-                    streamSkipUntil('\n');
-                    data = "";
-                    DBG("### got Network time.");
                 }
             }
         } while (millis() - startMillis < timeout_ms);
