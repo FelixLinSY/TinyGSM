@@ -352,7 +352,81 @@ class TinyGsmSim7020 : public TinyGsmModem<TinyGsmSim7020>, public TinyGsmNBIOT<
      * Time functions
      */
   protected:
-    // Can follow the standard CCLK function in the template
+    String getGSMDateTimeImpl(TinyGSMDateTimeFormat format)
+    {
+        sendAT(GF("+CCLK?"));
+        if (waitResponse(2000L, GF("+CCLK: ")) != 1) {
+            return "";
+        }
+
+        String res;
+
+        switch (format) {
+        case DATE_FULL:
+            res = stream.readStringUntil('\r');
+            break;
+        case DATE_TIME:
+            streamSkipUntil(',');
+            res = stream.readStringUntil('\r');
+            break;
+        case DATE_DATE:
+            res = stream.readStringUntil(',');
+            break;
+        }
+        waitResponse();     // Ends with OK
+        return res;
+    }
+
+    bool getNetworkTimeImpl(int *year, int *month, int *day, int *hour, int *minute, int *second, float *timezone)
+    {
+        sendAT(GF("+CCLK?"));
+        if (waitResponse(2000L, GF("+CCLK: ")) != 1) {
+            return false;
+        }
+
+        int iyear     = 0;
+        int imonth    = 0;
+        int iday      = 0;
+        int ihour     = 0;
+        int imin      = 0;
+        int isec      = 0;
+        int itimezone = 0;
+
+        // Date & Time
+        iyear       = streamGetIntBefore('/');
+        imonth      = streamGetIntBefore('/');
+        iday        = streamGetIntBefore(',');
+        ihour       = streamGetIntBefore(':');
+        imin        = streamGetIntBefore(':');
+        isec        = streamGetIntLength(2);
+        char tzSign = stream.read();
+        itimezone   = streamGetIntBefore('\n');
+        if (tzSign == '-') {
+            itimezone = itimezone * -1;
+        }
+
+        // Set pointers
+        if (iyear < 2000)
+            iyear += 2000;
+        if (year != NULL)
+            *year = iyear;
+        if (month != NULL)
+            *month = imonth;
+        if (day != NULL)
+            *day = iday;
+        if (hour != NULL)
+            *hour = ihour;
+        if (minute != NULL)
+            *minute = imin;
+        if (second != NULL)
+            *second = isec;
+        if (timezone != NULL)
+            *timezone = static_cast<float>(itimezone) / 4.0;
+
+        // Final OK
+        waitResponse();
+        return true;
+    }
 
     /*
      * Battery functions
